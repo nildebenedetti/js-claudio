@@ -55,6 +55,7 @@ function chiediAClaudio(messaggio) {
                 role: 'agent',
                 content: rispostaClaudio
             })
+
         })
         .catch(error => {
             throw error
@@ -62,7 +63,20 @@ function chiediAClaudio(messaggio) {
 
 }
 
+// funzione per stampare tutti i messaggi in pagina
 
-chiediAClaudio('mi chiamo Nilde');
-console.log(history);
+function renderAllMessages() {
+    chatHistoryEl.innerHTML = '';
+
+    let chatHtmlString = '';
+    for (const message of history) {
+        console.log(message);
+
+        chatHtmlString += `
+            <p>${message.role === 'user' ? 'Io' : 'Claudio'}: ${message.content}</p>
+        `
+    }
+
+    chatHistoryEl.innerHTML = chatHtmlString;
+}
 
