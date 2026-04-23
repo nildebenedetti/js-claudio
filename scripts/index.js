@@ -17,7 +17,7 @@ function chiediAClaudio(messaggio) {
         content: messaggio
     })
 
-     // creare variabili con parametri necessari per la fetch a Claude
+    // creare variabili con parametri necessari per la fetch a Claude
 
     const headers = { // i primi tre parametri sono obbligatori, l'ultimo facoltativo
         "x-api-key": CLAUDE_API_KEY, // mia variabile API key
@@ -34,7 +34,7 @@ function chiediAClaudio(messaggio) {
 
     // con queste cose voglio fare la fetch
 
-    fetch(CLAUDE_API_URL, {
+    return fetch(CLAUDE_API_URL, {
         method: "POST",
         headers: headers,// la mia variabile di prima
         body: JSON.stringify(requestObj) // stringo la mia variabile sopra
@@ -52,10 +52,11 @@ function chiediAClaudio(messaggio) {
         .then(data => {
             const rispostaClaudio = data.content[0].text; // la risposta di Claude nellóggetto
             history.push({
-                role: 'agent',
+                role: 'assistant',
                 content: rispostaClaudio
             })
 
+            return rispostaClaudio
         })
         .catch(error => {
             throw error
@@ -70,13 +71,30 @@ function renderAllMessages() {
 
     let chatHtmlString = '';
     for (const message of history) {
-        console.log(message);
 
         chatHtmlString += `
             <p>${message.role === 'user' ? 'Io' : 'Claudio'}: ${message.content}</p>
-        `
+        ` //bellissima elegantissima terna logica se user allora sono io altrimenti Claudio
     }
 
     chatHistoryEl.innerHTML = chatHtmlString;
 }
 
+// advebt listener al btn del text input
+
+sendMessageFormEl.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const messaggio = userMessageInputEl.value;
+
+    // Svuota l'input dopo l'invio
+    userMessageInputEl.value = '';
+
+    chiediAClaudio(messaggio)
+        .then(() => {
+            renderAllMessages();
+        })
+        .catch(err => {
+            alert("Errore nella chiamata a Claudio!");
+        });
+});
