@@ -4,12 +4,7 @@
 const chatHistoryEl = document.querySelector('#chat-history');
 const sendMessageFormEl = document.querySelector('#send-message-form');
 const userMessageInputEl = document.querySelector('#user-message');
-const history = [
-    {
-        "role": "user",
-        "content": "Ciao, che frutto ti piace?"
-    }
-]; // qui pusheremo i messagg idi user e agent
+const history = []; // qui pusheremo i messagg idi user e agent
 
 // creare variabili con parametri necessari per la fetch a Claude
 
