@@ -5,9 +5,9 @@ const chatHistoryEl = document.querySelector('#chat-history');
 const sendMessageFormEl = document.querySelector('#send-message-form');
 const userMessageInputEl = document.querySelector('#user-message');
 const history = [
-    { 
-        "role": "user", 
-        "content": "Ciao, che frutto ti piace?" 
+    {
+        "role": "user",
+        "content": "Ciao, che frutto ti piace?"
     }
 ]; // qui pusheremo i messagg idi user e agent
 
@@ -28,25 +28,31 @@ const requestObj = { // elementi obbligatori per la fetch
 
 // con queste cose voglio fare la fetch
 
-fetch (CLAUDE_API_URL, {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify(requestObj)
-})
-.then (response => {
-    if (!response.ok) {
 
-        return response.json()
-        .then(err => {throw err});
-    } else {
-        return response.json();
-    }
 
-})
-.then (data => {
-    console.log(data.content[0].text); // la risposta di Claude nellóggetto
-    
-})
-.catch (error => {
-    throw error 
-});
+function chiediAClaudio(messaggio) {
+    fetch(CLAUDE_API_URL, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(requestObj)
+    })
+        .then(response => {
+            if (!response.ok) {
+
+                return response.json()
+                    .then(err => { throw err });
+            } else {
+                return response.json();
+            }
+
+        })
+        .then(data => {
+            const rispostaClaudio = data.content[0].text; // la risposta di Claude nellóggetto
+
+        })
+        .catch(error => {
+            throw error
+        });
+    return rispostaClaudio
+}
+
