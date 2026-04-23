@@ -4,32 +4,40 @@
 const chatHistoryEl = document.querySelector('#chat-history');
 const sendMessageFormEl = document.querySelector('#send-message-form');
 const userMessageInputEl = document.querySelector('#user-message');
-const history = []; // qui pusheremo i messagg idi user e agent
+let history = []; // qui pusheremo i messagg idi user e agent
 
-// creare variabili con parametri necessari per la fetch a Claude
 
-const headers = { // i primi tre parametri sono obbligatori, l'ultimo facoltativo
-    "x-api-key": CLAUDE_API_KEY, // mia variabile API key
-    "anthropic-version": "2023-06-01", // la seconda versione, va imparata cosi'
-    "content-type": "application/json", // come vogliamo ricevere la risposta
-    "anthropic-dangerous-direct-browser-access": "true" // consento accesso diretto al browser
-}
-
-const requestObj = { // elementi obbligatori per la fetch
-    model: CLAUDE_MODEL, // quale modello, es "claude-haiku-4-5-20251001"
-    max_tokens: 1024, // limite massimo di token nella risposta
-    messages: history // questa variabile dove metteremo la cronologia msg
-}
-
-// con queste cose voglio fare la fetch
 
 
 
 function chiediAClaudio(messaggio) {
+
+    history.push({ // questo serve a mettere messaggio utente in cronologia
+        role: 'user',
+        content: messaggio
+    })
+
+     // creare variabili con parametri necessari per la fetch a Claude
+
+    const headers = { // i primi tre parametri sono obbligatori, l'ultimo facoltativo
+        "x-api-key": CLAUDE_API_KEY, // mia variabile API key
+        "anthropic-version": "2023-06-01", // la seconda versione, va imparata cosi'
+        "content-type": "application/json", // come vogliamo ricevere la risposta
+        "anthropic-dangerous-direct-browser-access": "true" // consento accesso diretto al browser
+    }
+
+    const requestObj = { // elementi obbligatori per la fetch
+        model: CLAUDE_MODEL, // quale modello, es "claude-haiku-4-5-20251001"
+        max_tokens: 1024, // limite massimo di token nella risposta
+        messages: history // questa variabile dove metteremo la cronologia msg
+    }
+
+    // con queste cose voglio fare la fetch
+
     fetch(CLAUDE_API_URL, {
         method: "POST",
-        headers: headers,
-        body: JSON.stringify(requestObj)
+        headers: headers,// la mia variabile di prima
+        body: JSON.stringify(requestObj) // stringo la mia variabile sopra
     })
         .then(response => {
             if (!response.ok) {
@@ -43,11 +51,18 @@ function chiediAClaudio(messaggio) {
         })
         .then(data => {
             const rispostaClaudio = data.content[0].text; // la risposta di Claude nellóggetto
-
+            history.push({
+                role: 'agent',
+                content: rispostaClaudio
+            })
         })
         .catch(error => {
             throw error
         });
-    return rispostaClaudio
+
 }
+
+
+chiediAClaudio('mi chiamo Nilde');
+console.log(history);
 
